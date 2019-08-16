@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div>
+    <ol class="breadcrumb">
+        <li class="active">菜单-
+        </li>
+        <li class="active">地点信息-
+        </li>
+        <li class="active">地点修改
+        </li>
+    </ol>
+
+    <form class="form-horizontal" role="form">
+        <input type="hidden" id="id"  th:value="${site.id}">
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">地点名称</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="name" placeholder="请输入名称" th:value="${site.name}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="trashNumber" class="col-sm-2 control-label">垃圾桶数目</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="trashNumber" disabled="disabled" th:value="${site.trashNumber}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="typeSelect" class="col-sm-2 control-label">角色</label>
+            <div class="col-sm-5">
+                <select class="form-control" id="typeSelect"  th:with="types=${@SiteTypeService.getTypes()}">
+                    <option
+                            th:each="type : ${types}" th:text="${role.name}"
+                            th:selected="${site.type  eq type.value}"
+                            th:value="${type.value}">
+                    </option>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-sm-5">
+        <input type="button" class="btn " id="btn_update" value="修改" >
+        <input type="button" class="btn " id="btn_back" value="返回" >
+        </div>
+
+    </form>
+</div>
+<script>
+    $(document).ready(function(){
+        //提交
+        $("#btn_update").click(function (e) {
+            var id = $("#id").val();
+            var name = $("#name").val();
+            var trashNumber = $("#trashNumber").val();
+            var type = $("#typeSelect").val();
+            update("site",{"id":id,"name":name,"trashNumber":trashNumber,"type":type});
+        });
+        //返回
+        $("#btn_back").click(function (e) {
+            loadPage("site",1)
+        });
+    });
+</script>
+</body>
+</html>

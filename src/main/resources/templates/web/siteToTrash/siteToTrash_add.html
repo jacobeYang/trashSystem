@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+</head>
+<body>
+<div  id="right" >
+    <ol class="breadcrumb">
+        <li class="active">菜单-地点:
+        </li>
+        <li class="active" th:text="${siteName}">
+        </li>
+    </ol>
+
+    <div class="list_content">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form role="form" class="form-inline">
+                <div class="form-group">
+                    <label for="search_type">类型：</label>
+                    <select class="form-control" id="search_type" th:with="types=${@TrashTypeService.getTypes()}">
+                        <option value="-1" selected="selected">所有类型</option>
+                        <option  th:each="type : ${types}" th:text="${type.name}"
+                                 th:value="${type.value}"
+                        th:selected="${typeValue eq type.value}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button  class="btn " id="btn_search" type="button">查找</button>
+                </div>
+                <button type="button"  class="btn " id="btn_add" style="margin-left: 659px;">添加</button>
+
+            </form>
+        </div>
+    </div>
+    <!--
+        列表展示
+    -->
+    <div class="table-responsive">
+        <table class="table table-striped ">
+            <thead>
+            <tr>
+                <th>类型</th>
+                <th>颜色</th>
+                <th>大小</th>
+                <th>注册时间</th>
+                <th>当前容量</th>
+                <th align="center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="trash,memberStat:${trashList}">
+                <td ><a href="javascript:;" class="btn_edit" th:id="${trash.id}" th:text="${@TrashTypeService.getTypeName('__${trash.type}__')}"></a></td>
+                <td th:text="${trash.color}"></td>
+                <td th:text="${trash.size}"></td>
+                <td th:text="${#dates.format(trash.time, 'yyyy/MM/dd HH:mm')}"></td>
+                <td th:text="${trash.capacity}"></td>
+
+                <td>
+                    <div class="btn-group">
+                        <input type="checkbox" class="input_checkbox" th:value="${trash.id}">
+
+                    </div>
+
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="web/common/common_header :: my_pagination_footer"></div>
+
+    </div>
+</div>
+
+
+<input type="text" hidden="hidden" id="get_page_num" th:value="${page_num}">
+<input type="text" hidden="hidden" id="siteId" th:value="${siteId}">
+
+
+<script>
+    $(document).ready(function(){
+        //总页数 page_num
+        var page_num = $("#get_page_num").val();
+        var siteId = $("#siteId").val();
+        //上一页
+        $('#pre').click(function (e) {
+            var num = $("#current_num").text();
+            var type = $("#search_type").val();
+            if(parseInt(num)>1){
+                loadAddPage("siteToTrash",siteId,type,Number(num)-1);
+            }
+        });
+        //下一页
+        $('#next').click(function (e) {
+            var num =  $("#current_num").text();
+            var type = $("#search_type").val();
+            if(parseInt(num)<parseInt(page_num)){
+                loadAddPage("siteToTrash",siteId,type,Number(num)+1);
+            }
+        });
+        //添加
+        $("#btn_add").click(function (e) {
+            var trashIds =[];//定义地点id数组
+            $('input[class="input_checkbox"]:checked').each(function(){//遍历每一个名字为nodes的复选框，其中选中的执行函数
+                trashIds.push($(this).val());//将选中的值添加到数组中
+            });
+            var data = {"siteId":siteId,"trashIds":trashIds}
+            $.get("/siteToTrash/insert",data,function(result){
+                alert(result.message);
+                if(result.type == 0){
+                    var typeValue = $("#search_type").val();
+                    loadAddPage("siteToTrash",siteId,typeValue,1);
+                }
+            })
+        });
+
+        //搜索
+        $("#btn_search").click(function (e) {
+            var type = $("#search_type").val();
+            loadAddPage("siteToTrash",siteId,type,1);
+        });
+
+    });
+</script>
+</body>
+</html>

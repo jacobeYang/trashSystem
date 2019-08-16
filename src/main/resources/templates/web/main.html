@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <div th:replace="web/common/common_header :: my_header"  ></div>
+    <link href="/static/css/web/manage.css" rel="stylesheet" />
+
+    <link href="/static/css/web/main.css" rel="stylesheet" />
+</head>
+<body>
+<div class=" main">
+    <div class="main_row">
+        <div class=" main_left" >
+            <!--左侧-->
+            <div>
+                <!--系统名-->
+                <div class="left_sys">
+                    <img src="/static/icon/logo-white.png" width="40px" style="float: left">
+                    <H5>智能垃圾桶</H5>
+                    <H6> —— 后台管理</H6>
+                </div>
+
+            </div>
+            <div>
+                <!--用户名-->
+                <div class="left_user">
+                    <img src="/static/image/image_1.jpg"  class="rounded-circle" width="40" height="40">
+                    <div>
+                        <h th:text="${user.name}"></h><br>
+                        <h6 th:text="${roleName}"></h6>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h class="my_a" >基础管理</h>
+                <nav class="navbar  bg-dark navbar-dark">
+                    <!-- Links -->
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link active" href="javascript:;" onclick="loadPage('user',1)">人员管理</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;" onclick="loadPage('trash',1)">垃圾桶管理</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;" onclick="loadPage('site',1)">地点管理</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;" onclick="loadPage('role',1)">角色管理</a>
+                        </li>
+
+                    </ul>
+                </nav>
+                <h class="my_a" >责任管理</h>
+                <nav class="navbar  bg-dark navbar-dark">
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;" onclick="loadPage('userToSite',1)">人员对地点</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;" onclick="loadPage('siteToTrash',1)">地点对垃圾桶</a>
+                        </li>
+
+                    </ul>
+                </nav>
+                <h class="my_a" >信息</h>
+                <nav class="navbar  bg-dark navbar-dark">
+
+                        <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;">申请信息查看</a>
+                        </li>
+
+                        </ul>
+                    </nav>
+            </div>
+        </div>
+        <div class=" main_right">
+            <!--右侧-->
+            <div th:include="web/user/user_manage::user"></div>
+        </div>
+    </div>
+
+
+</div>
+<div th:replace="web/common/common_header :: confirm_delete_model"></div>
+<div th:replace="web/common/common_header :: my_footer"></div>
+
+<script>
+    function getHtml(url){
+        $.get(url,function(result){
+            $(".main_right").html(result);
+        })
+    }
+    function loadPage(page,current_num) {
+        getHtml("/"+page+"/list/"+current_num);
+    }
+    function loadAddPage(page) {
+        var length=arguments.length;
+        var url = "/"+arguments[0]+"/add";
+        for(var i=1;i<length;i++){
+            url+= "/"+arguments[i];
+        }
+        getHtml(url);
+    }
+
+    function loadEditPage(page,id) {
+        var length=arguments.length;
+        var url = "/"+arguments[0]+"/edit";
+        for(var i=1;i<length;i++){
+            url+= "/"+arguments[i];
+        }
+        getHtml(url);
+    }
+    function loadSearchPage() {
+        var length=arguments.length;
+        var url = "/"+arguments[0]+"/search";
+        for(var i=1;i<length;i++){
+            url+= "/"+arguments[i];
+        }
+        getHtml(url);
+    }
+    function alertMessage(page,result){
+        alert(result.message);
+        if(result.type == 0){
+            loadPage(page,1);
+        }
+    }
+    function del(page,id) {
+        $("#myModal").modal('show');
+        $("#modal_confirm").unbind("click").click(function () {
+            $("#myModal").modal('hide');
+            $.get("/"+page+"/delete/"+id,function(result){
+                alertMessage(page,result)
+            })
+        })
+    }
+    function insert(page,data) {
+        //提交数组数据可以在前端这样解决
+        //jQuery.ajaxSettings.traditional = true;
+        $.get("/"+page+"/insert",data,function(result){
+            alert(result.message);
+        })
+    }
+    function update(page,data) {
+        $.get("/"+page+"/update",data,function(result){
+            alert(result.message);
+        })
+    }
+    $(document).ready(function(){
+        loadPage("user","1");
+        $('.nav-link').click(function (e) {
+            $('.nav-link').removeClass('active');
+            $(this).addClass('active');
+        });
+
+
+    });
+</script>
+</body>
+
+
+</html>

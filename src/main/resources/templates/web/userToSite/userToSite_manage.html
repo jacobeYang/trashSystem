@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+</head>
+<body>
+<div  id="right" th:fragment="user">
+    <ol class="breadcrumb">
+        <li class="active">菜单-
+        </li>
+        <li class="active">用户信息
+        </li>
+    </ol>
+
+    <div class="list_content">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form role="form" class="form-inline">
+                <div class="form-group">
+                    <label for="search_name">姓名：</label>
+                    <input type="text" class="form-control" id="search_name" placeholder="请输入姓名" th:value="${name?:null}">
+                </div>
+                <div class="form-group">
+                    <label for="search_role_id">角色：</label>
+                    <select class="form-control" id="search_role_id" th:with="roleList=${@RoleService.getRoles()}">
+                        <option value="all" selected="selected">所有角色</option>
+                        <option  th:each="role : ${roleList}" th:text="${role.name}"
+                                 th:value="${role.id}"
+                        th:selected="${roleId eq role.id}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button  class="btn " id="btn_search" type="button">查找</button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    <!--
+        列表展示
+    -->
+    <div class="table-responsive">
+        <table class="table table-striped ">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>账户</th>
+                <th>性别</th>
+                <th>年龄</th>
+                <th>角色</th>
+                <th align="center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user,memberStat:${userList}">
+                <td ><a href="javascript:;" class="btn_edit" th:id="${user.id}" th:text="${user.name}"></a></td>
+                <td th:text="${user.account}"></td>
+                <td th:text="${user.sex}"></td>
+                <td th:text="${user.age}"></td>
+                <td th:text="${@RoleService.getRoleNameById('__${user.roleId}__')}"></td>
+
+                <td>
+                    <div class="btn-group">
+                        <!--<button type="button" class="btn  btn_edit" th:id="${user.id}">修改</button>-->
+                        <button type="button" class="btn btn_delete" th:id="${user.id}">添加</button>
+                    </div>
+
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+        <div th:replace="web/common/common_header :: my_pagination_footer"></div>
+
+    </div>
+</div>
+
+
+<input type="text" hidden="hidden" id="get_page_num" th:value="${page_num}">
+
+<script>
+    $(document).ready(function(){
+        //总页数 page_num
+        var page_num = $("#get_page_num").val();
+        //上一页
+        $('#pre').click(function (e) {
+            var num = $("#current_num").text();
+            var name = $("#search_name").val();
+            var roleId = $("#search_role_id").val();
+            if(name == ""){
+                name = "all";
+            }
+            if(parseInt(num)>1){
+                loadSearchPage("userToSite",name,roleId,Number(num)-1);
+            }
+        });
+        //下一页
+        $('#next').click(function (e) {
+            var num =  $("#current_num").text();
+            var name = $("#search_name").val();
+            var roleId = $("#search_role_id").val();
+            if(name == ""){
+                name = "all";
+            }
+            if(parseInt(num)<parseInt(page_num)){
+                loadSearchPage("userToSite",name,roleId,Number(num)+1);
+            }
+        });
+        //添加         使用.btn_delete是应为要用这个样式
+        $(".btn_delete").click(function (e) {
+            var id = this.id;
+            loadAddPage("userToSite",id,"all",-1,1);
+        });
+        //查看或修改
+        $(".btn_edit").click(function (e) {
+            var id = this.id;
+            loadEditPage("userToSite",this.id,"all",-1,1);
+        });
+
+        //搜索
+        $("#btn_search").click(function (e) {
+            var name = $("#search_name").val();
+            var roleId = $("#search_role_id").val();
+            if(name == ""){
+                name = "all";
+            }
+            loadSearchPage("userToSite",name,roleId,1);
+        });
+
+    });
+</script>
+</body>
+</html>

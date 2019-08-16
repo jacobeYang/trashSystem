@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div>
+    <ol class="breadcrumb">
+        <li class="active">菜单-
+        </li>
+        <li class="active">垃圾桶信息-
+        </li>
+        <li class="active">垃圾桶添加
+        </li>
+    </ol>
+
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="typeSelect"  class="col-sm-2 control-label">类型</label>
+            <div class="col-sm-5">
+            <select class="form-control" id="typeSelect"  th:with="types=${@TrashTypeService.getTypes()}">
+                <option th:each="type : ${types}" th:text="${type.name}"
+                        th:value="${type.value}">
+                </option>
+            </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="color" class="col-sm-2 control-label">颜色</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="color" placeholder="请输入颜色">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="size" class="col-sm-2 control-label">大小</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="size" placeholder="请输入大小">
+            </div>
+        </div>
+
+        <div class="form-group col-sm-5" >
+        <input type="button" class="btn " id="btn_insert" value="添加" >
+        <input type="button" class="btn " id="btn_back" value="返回" >
+        </div>
+
+    </form>
+</div>
+<script>
+    $(document).ready(function(){
+        //提交
+        $("#btn_insert").click(function (e) {
+            var size = $("#size").val();
+            var color = $("#color").val();
+            var type = $("#typeSelect").val();
+            insert("trash",{"size":size,"color":color,"type":type});
+        });
+        //返回
+        $("#btn_back").click(function (e) {
+            loadPage("trash",1)
+        });
+    });
+</script>
+</body>
+</html>

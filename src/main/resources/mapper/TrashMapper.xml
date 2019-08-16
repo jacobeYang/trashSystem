@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jacob.trash.dao.TrashMapper" >
+  <resultMap id="BaseResultMap" type="com.jacob.trash.domain.Trash" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="size" property="size" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="capacity" property="capacity" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, color, size, time, capacity
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from trash
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from trash
+  </select>
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="int" >
+    select
+    <include refid="Base_Column_List" />
+    from trash
+    where 1=1
+
+    <choose>
+      <when test=" type != -1">
+        and type = #{type}
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+
+  </select>
+  <select id="selectIn" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from trash
+    where 1=1
+    <choose>
+      <when test=" arg0 != null and arg0.size()>0">
+        and id IN
+        <foreach item="item" index="index" collection="arg0"
+                 open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+
+    <choose>
+      <when test=" arg1 != -1">
+        and type = #{arg1}
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+
+  </select>
+
+  <select id="selectNoIn" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from trash
+    where 1=1
+    <choose>
+      <when test=" arg0 != null and arg0.size()>0">
+        and id NOT IN
+        <foreach item="item" index="index" collection="arg0"
+                 open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+
+    <choose>
+      <when test=" arg1 != -1">
+        and type = #{arg1}
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from trash
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.jacob.trash.domain.Trash" >
+    insert into trash (id, type, color, 
+      size, time, capacity
+      )
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{color,jdbcType=VARCHAR}, 
+      #{size,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, #{capacity,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jacob.trash.domain.Trash" >
+    insert into trash
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="color != null" >
+        color,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="capacity != null" >
+        capacity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="capacity != null" >
+        #{capacity,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jacob.trash.domain.Trash" >
+    update trash
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        size = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="capacity != null" >
+        capacity = #{capacity,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jacob.trash.domain.Trash" >
+    update trash
+    set type = #{type,jdbcType=INTEGER},
+      color = #{color,jdbcType=VARCHAR},
+      size = #{size,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      capacity = #{capacity,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div>
+    <ol class="breadcrumb">
+        <li class="active">菜单-
+        </li>
+        <li class="active">用户信息-
+        </li>
+        <li class="active">用户修改
+        </li>
+    </ol>
+
+    <form class="form-horizontal" role="form">
+        <input type="hidden" id="id"  th:value="${user.id}">
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="name" placeholder="请输入姓名" th:value="${user.name}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="account" class="col-sm-2 control-label">账户</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="account" placeholder="请输入账户" th:value="${user.account}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pwd" class="col-sm-2 control-label">密码</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="pwd" placeholder="请输入密码" th:value="${user.pwd}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sex" class="col-sm-2 control-label">性别</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="sex" placeholder="请输入性别" th:value="${user.sex}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="age" class="col-sm-2 control-label">年龄</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="age" placeholder="请输入年龄" th:value="${user.age}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="roleSelect" class="col-sm-2 control-label">角色</label>
+            <div class="col-sm-5">
+                <select class="form-control" id="roleSelect"  th:with="roleList=${@RoleService.getRoles()}">
+                    <option
+                            th:each="role : ${roleList}" th:text="${role.name}"
+                            th:selected="${user.roleId  eq role.id}"
+                            th:value="${role.id}">
+                    </option>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-sm-5">
+        <input type="button" class="btn " id="btn_update" value="修改" >
+        <input type="button" class="btn " id="btn_back" value="返回" >
+        </div>
+
+    </form>
+</div>
+<script>
+    $(document).ready(function(){
+        //提交
+        $("#btn_update").click(function (e) {
+            var id = $("#id").val();
+            var name = $("#name").val();
+            var account = $("#account").val();
+            var pwd = $("#pwd").val();
+            var sex = $("#sex").val();
+            var age = $("#age").val();
+            var roleId = $("#roleSelect").val();
+            update("user",{"id":id,"name":name,"account":account,"pwd":pwd,"sex":sex,"age":age,"roleId":roleId});
+        });
+        //返回
+        $("#btn_back").click(function (e) {
+            loadPage("user",1)
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jacob.trash.dao.SiteTrashMapper" >
+  <resultMap id="BaseResultMap" type="com.jacob.trash.domain.SiteTrash" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="site_id" property="siteId" jdbcType="VARCHAR" />
+    <result column="trash_id" property="trashId" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="trashIdResultMap" type="java.lang.String" >
+    <result column="trash_id"  jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, site_id, trash_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from site_trash
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectTrashIdBySiteId" resultType="String" parameterType="java.lang.String" >
+    select
+    trash_id
+    from site_trash
+    where site_id = #{siteId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from site_trash
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByUserIdAndSiteId"  >
+    delete from site_trash
+    where site_id = #{arg0} and trash_id = #{arg1}
+  </delete>
+  <insert id="insert" parameterType="com.jacob.trash.domain.SiteTrash" >
+    insert into site_trash (id, site_id, trash_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{siteId,jdbcType=VARCHAR}, #{trashId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jacob.trash.domain.SiteTrash" >
+    insert into site_trash
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="siteId != null" >
+        site_id,
+      </if>
+      <if test="trashId != null" >
+        trash_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="siteId != null" >
+        #{siteId,jdbcType=VARCHAR},
+      </if>
+      <if test="trashId != null" >
+        #{trashId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jacob.trash.domain.SiteTrash" >
+    update site_trash
+    <set >
+      <if test="siteId != null" >
+        site_id = #{siteId,jdbcType=VARCHAR},
+      </if>
+      <if test="trashId != null" >
+        trash_id = #{trashId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jacob.trash.domain.SiteTrash" >
+    update site_trash
+    set site_id = #{siteId,jdbcType=VARCHAR},
+      trash_id = #{trashId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

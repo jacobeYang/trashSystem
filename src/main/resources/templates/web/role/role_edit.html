@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div>
+    <ol class="breadcrumb">
+        <li class="active">菜单-
+        </li>
+        <li class="active">角色信息-
+        </li>
+        <li class="active">角色修改
+        </li>
+    </ol>
+
+    <form class="form-horizontal" role="form">
+        <input type="hidden" id="id"  th:value="${role.id}">
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">名称</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="name" placeholder="请输入名称" th:value="${role.name}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="rank" class="col-sm-2 control-label">级别</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="rank" placeholder="请输入级别" th:value="${role.rank}">
+            </div>
+        </div>
+
+
+        <div class="form-group col-sm-5">
+        <input type="button" class="btn " id="btn_update" value="修改" >
+        <input type="button" class="btn " id="btn_back" value="返回" >
+        </div>
+
+    </form>
+</div>
+<script>
+    $(document).ready(function(){
+        //提交
+        $("#btn_update").click(function (e) {
+            var id = $("#id").val();
+            var name = $("#name").val();
+            var rank = $("#rank").val();
+
+            update("role",{"id":id,"name":name,"rank":rank});
+        });
+        //返回
+        $("#btn_back").click(function (e) {
+            loadPage("role",1)
+        });
+    });
+</script>
+</body>
+</html>

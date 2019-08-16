@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div>
+    <ol class="breadcrumb">
+        <li class="active">菜单-用户-
+        </li>
+        <li class="active" th:text="${userName}">
+        </li>
+        <li class="active">-名下地点信息
+        </li>
+    </ol>
+
+    <div class="list_content">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form role="form" class="form-inline">
+                    <div class="form-group">
+                        <label for="search_name">地点名称：</label>
+                        <input type="text" class="form-control" id="search_name" placeholder="请输入姓名" th:value="${name?:null}">
+                    </div>
+                    <div class="form-group">
+                        <label for="search_type">类型：</label>
+                        <select class="form-control" id="search_type" th:with="types=${@SiteTypeService.getTypes()}">
+                            <option value="-1" selected="selected">所有类型</option>
+                            <option  th:each="type : ${types}" th:text="${type.name}"
+                                     th:value="${type.value}"
+                                     th:selected="${typeValue eq type.value}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button  class="btn " id="btn_search" type="button">查找</button>
+                    </div>
+                    <button type="button"  class="btn " id="btn_add" style="margin-left: 327px;">删除</button>
+
+                </form>
+            </div>
+        </div>
+        <!--
+            列表展示
+        -->
+        <div class="table-responsive">
+            <table class="table table-striped ">
+                <thead>
+                <tr>
+                    <th>地点名称</th>
+                    <th>垃圾桶数量</th>
+                    <th>类型</th>
+                    <th align="center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="site,memberStat:${siteList}">
+                    <td ><a href="javascript:;" class="btn_edit" th:id="${site.id}" th:text="${site.name}"></a></td>
+                    <td th:text="${site.trashNumber}"></td>
+                    <td th:text="${@SiteTypeService.getTypeName('__${site.type}__')}"></td>
+
+                    <td>
+                        <div class="btn-group">
+                            <input type="checkbox" class="input_checkbox" th:value="${site.id}">
+                        </div>
+
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="web/common/common_header :: my_pagination_footer"></div>
+
+    </div>
+</div>
+<input type="text" hidden="hidden" id="get_page_num" th:value="${page_num}">
+<input type="text" hidden="hidden" id="userId" th:value="${userId}">
+
+<script>
+    $(document).ready(function(){
+        //总页数 page_num
+        var page_num = $("#get_page_num").val();
+        //userId
+        var userId = $("#userId").val();
+        //上一页
+        $('#pre').click(function (e) {
+            var num = $("#current_num").text();
+            var name = $("#search_name").val();
+            var typeValue = $("#search_type").val();
+            if(name == ""){
+                name = "all";
+            }
+            if(parseInt(num)>1){
+                loadEditPage("userToSite",userId,name,typeValue,Number(num)-1);
+            }
+        });
+        //下一页
+        $('#next').click(function (e) {
+            var num =  $("#current_num").text();
+            var name = $("#search_name").val();
+            var typeValue = $("#search_type").val();
+            if(name == ""){
+                name = "all";
+            }
+            if(parseInt(num)<parseInt(page_num)){
+                loadEditPage("userToSite",userId,name,typeValue,Number(num)+1);
+            }
+        });
+
+        //删除
+        $("#btn_add").click(function (e) {
+            var siteIds =[];//定义地点id数组
+            $('input[class="input_checkbox"]:checked').each(function(){//遍历每一个名字为nodes的复选框，其中选中的执行函数
+                siteIds.push($(this).val());//将选中的值添加到数组chk_value中
+            });
+            var data = {"userId":userId,"siteIds":siteIds}
+            $.get("/userToSite/delete",data,function(result){
+                alert(result.message);
+                if(result.type == 0){
+                    var name = $("#search_name").val();
+                    var typeValue = $("#search_type").val();
+                    if(name == ""){
+                        name = "all";
+                    }
+                    loadEditPage("userToSite",userId,name,typeValue,1);
+                }
+            })
+
+        });
+
+
+        //搜索
+        $("#btn_search").click(function (e) {
+            var name = $("#search_name").val();
+            var typeValue = $("#search_type").val();
+            if(name == ""){
+                name = "all";
+            }
+            loadEditPage("userToSite",userId,name,typeValue,1);
+        });
+
+    });
+</script>
+</body>
+</html>
